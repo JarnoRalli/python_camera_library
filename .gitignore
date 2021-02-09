@@ -1,0 +1,8 @@
+# Ignore PLY files at the root
+*.ply
+
+# Ignore Python IDE related directories/files
+temp/
+.idea/
+__pycache__/
+

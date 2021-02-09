@@ -1,0 +1,16 @@
+name: 3d-computer-vision
+channels:
+    - open3d-admin
+    - menpo
+    - conda-forge
+    - anaconda
+dependencies:
+    - python==3.6.3
+    - numpy
+    - matplotlib
+    - pip
+    - pip:
+        - pykitti
+        - open3d
+        - opencv-python
+
