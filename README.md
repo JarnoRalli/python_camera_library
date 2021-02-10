@@ -15,18 +15,29 @@ Directories
 
 ## Examples
 
-### KITTI Examples
+Before executing the examples, create and activate a Conda virtual environment defined in `./conda_environments/3d-computer-vision.yml`. After cloning the repo, the test data used in the examples needs to be pulled 
+using `git pull` or `git lfs pull`.
 
-The KITTI examples demonstrate how the lidar generated point cloud can be transformed to the point of view of a camera.
+### KITTI Example
 
-### Stereo Camera Examples
+The KITTI example demonstrates how lidar generated point clouds can be transformed to different coordinate frames. Outputs PLY files that can be viewed, for example, using CloudCompare or MeshLab.
 
-The stereo camera examples demonstrate how a X- and Y-coordinates can be generated based on a depth map (Z-coordinate).
+```python
+python ./kitti_example.py
+```
+
+### Stereo Camera Example
+
+The stereo camera example demonstrates how a X- and Y-coordinates can be generated based on a depth map (Z-coordinate). Outputs a PLY file that can be viewed, for example, using CloudCompare or MeshLab.
+
+```python
+python ./stereo_camera_example.py
+```
 
 ## Test Data
 
-The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). For convenience, I have provided some data from one of the raw KITTI datasets. The stereo
-camera data contains a pair of rectified stereo camera images, along with the rectified camera parameters, and a depth map.
+The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). For convenience, I have provided some data from one of the raw KITTI datasets. The stereo camera data contains a pair of rectified stereo camera images, along with the rectified camera parameters, 
+and a depth map. Actual test data need to be pulled using `git pull` or `git lfs pull`.
 
 KITTI lidar                     |  Stereo camera 3D-reconstruction
 :--------------------------------:|:-------------------------:
