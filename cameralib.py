@@ -187,7 +187,7 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
     try:
         # We expect that the points are given in the camera coordinate frame, so remove points that are
         # behind the camera, i.e. where the Z-coordinate is negative
-        mask = points[:, 2] <= 0.0
+        mask = points[2, :] <= 0.0
         points = points[:, ~mask]
 
         # Project points to image
@@ -195,7 +195,7 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
         # Normalize coordinates
         uv[0, :] /= uv[2, :]
         uv[1, :] /= uv[2, :]
-        np.delete(uv, (0), axis=0)
+        uv = np.delete(uv, 2, axis=0)
 
         # Mask out points that don't fall withing the given image (i.e. are outside of FOV)
         mask = (uv[0, :] < 0) | (uv[0, :] > (image_size[1] - 1)) | (uv[1, :] < 0) | (uv[1, :] > (image_size[0] - 1))
@@ -262,7 +262,7 @@ def forwardprojectP(points: np.array, P: np.array, image_size, image=None):
         # Normalize coordinates
         uv[0, :] /= uv[2, :]
         uv[1, :] /= uv[2, :]
-        np.delete(uv, (0), axis=0)
+        uv = np.delete(uv, 2, axis=0)
 
         # Mask out points that don't fall withing the given image (i.e. are outside of FOV)
         mask = (uv[0, :] < 0) | (uv[0, :] > (image_size[1] - 1)) | (uv[1, :] < 0) | (uv[1, :] > (image_size[0] - 1))
