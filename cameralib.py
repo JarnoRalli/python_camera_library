@@ -55,7 +55,7 @@ def concatenateRt(R: np.array, t: np.array):
         Transformation matrix
     """
 
-    return np.concatenate((np.hstack((R, t)), np.ones((1, 4))), axis=0)
+    return np.concatenate((np.hstack((R, t)), np.array([[0, 0, 0, 1]])), axis=0)
 
 
 def transform(T: np.array, points: np.array):
@@ -176,9 +176,9 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
     Returns
     -------
     (3D points, uv-coordinates, depth map) : numpy array
-        If no image is given (i.e. is None). Shapes are (3, nr_points), (2, nr_points) and (rows, cols)
+        If no image is given (i.e. is None). Shapes are (3, nr_points), (3, nr_points) and (rows, cols)
     (3D points, uv-coordinates, RGB, depth map) : numpy array
-        If image is given. Shapes are (3, nr_points), (2, nr_points), (3, nr_points) and (rows, cols)"""
+        If image is given. Shapes are (3, nr_points), (3, nr_points), (3, nr_points) and (rows, cols)"""
 
     # Convert the image_size into a tuple. It might already be a tuple, but let's just make sure
     image_size = (int(image_size[0]), int(image_size[1]))
@@ -195,7 +195,7 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
         # Normalize coordinates
         uv[0, :] /= uv[2, :]
         uv[1, :] /= uv[2, :]
-        uv = np.delete(uv, 2, axis=0)
+        uv[2, :] /= uv[2, :]
 
         # Mask out points that don't fall withing the given image (i.e. are outside of FOV)
         mask = (uv[0, :] < 0) | (uv[0, :] > (image_size[1] - 1)) | (uv[1, :] < 0) | (uv[1, :] > (image_size[0] - 1))
@@ -238,9 +238,9 @@ def forwardprojectP(points: np.array, P: np.array, image_size, image=None):
     Returns
     -------
     (3D points, uv-coordinates, depth map) : numpy array
-        If no image is given (i.e. is None). Shapes are (3, nr_points), (2, nr_points) and (rows, cols)
+        If no image is given (i.e. is None). Shapes are (3, nr_points), (3, nr_points) and (rows, cols)
     (3D points, uv-coordinates, RGB, depth map) : numpy array
-        If image is given. Shapes are (3, nr_points), (2, nr_points), (3, nr_points) and (rows, cols)
+        If image is given. Shapes are (3, nr_points), (3, nr_points), (3, nr_points) and (rows, cols)
     """
 
     # Convert the image_size into a tuple. It might already be a tuple, but let's just make sure
@@ -262,7 +262,7 @@ def forwardprojectP(points: np.array, P: np.array, image_size, image=None):
         # Normalize coordinates
         uv[0, :] /= uv[2, :]
         uv[1, :] /= uv[2, :]
-        uv = np.delete(uv, 2, axis=0)
+        uv[2, :] /= uv[2, :]
 
         # Mask out points that don't fall withing the given image (i.e. are outside of FOV)
         mask = (uv[0, :] < 0) | (uv[0, :] > (image_size[1] - 1)) | (uv[1, :] < 0) | (uv[1, :] > (image_size[0] - 1))
