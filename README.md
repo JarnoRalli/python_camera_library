@@ -1,13 +1,15 @@
 # Python Camera Library
 
-This project demonstrates a simple pinhole camera library, implemented in Python using numpy. The library implements
-a few simple functions, such as forward- and back-projections. Here forward projection refers to how 3D points, from the
-real world, are projected onto a pinhole camera, and the image plane. In this context backward projection refers to the opposite, i.e. back projecting image points, as seen in the image plane, back to the 3D world.
+This project demonstrates a simple pin-hole camera library, together with forward- and back-projection functions, and an
+implementation of an omnidirectional camera model that can be used, for example, for converting fish-eye images into pin-hole camera images.
+Here forward projection refers to how 3D points, from the real world, are projected onto a pinhole camera, and the image plane. Similarly backward projection refers to the opposite, i.e. back projecting image points, as seen in the image plane, back to the 3D world.
 
 Files
 * Camera library `./cameralib.py`
+* Omnidirectional camera library `./omnidirectional_camera.py`
 * KITTI examples `./kitti_example.py`
 * Stereo camera examples `./stereo_camera_example.py`
+* Fish-eye camera remapping into a pin-hole camera `./fisheye_example.py`
 
 Directories
 * `./conda_environments/` contains a YAML file for generating a Conda environment that can be used to execute the examples
@@ -34,9 +36,19 @@ The stereo camera example demonstrates how a X- and Y-coordinates can be generat
 python ./stereo_camera_example.py
 ```
 
+### Fish-eye Camera Example
+
+The fish-eye camera example shows images captured using a camera with "fish-eye" lenses, described using the [omnidirectional camera model](http://rpg.ifi.uzh.ch/docs/IROS06_scaramuzza.pdf), can be re-mapped into a pin-hole camera image.
+
+```python
+python ./fisheye_example.py
+```
+
 ## Test Data
 
-The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). For convenience, I have provided some data from one of the raw KITTI datasets. The stereo camera data contains a pair of rectified stereo camera images, along with the rectified camera parameters, 
+The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). The fish-eye camera data is from the [OCamCalib Toolbox](https://sites.google.com/site/scarabotix/ocamcalib-toolbox/ocamcalib-toolbox-download-page) (University of Zurich).
+
+For convenience, I have provided some data from one of the raw KITTI datasets, and a test image from the OCamCalib Toolbox. The stereo camera data contains a pair of rectified stereo camera images, along with the rectified camera parameters, 
 and a depth map. Actual test data need to be pulled using `git pull` or `git lfs pull`.
 
 KITTI lidar                     |  Stereo camera 3D-reconstruction
@@ -53,6 +65,18 @@ If you use any data from the KITTI raw dataset, please cite the following.
   title = {Vision meets Robotics: The KITTI Dataset},
   journal = {International Journal of Robotics Research (IJRR)},
   year = {2013}
+} 
+```
+
+If you use the fish-eye camera data, please cite the following.
+
+```
+{
+  @ARTICLE{Scaramuzza2006ICVS,
+  author = {Scaramuzza, D., Martinelli, A., Siegwart, R.},
+  title = {A Flexible Technique for Accurate Omnidirectional Camera Calibration and Structure from Motion},
+  journal = {Proceedings of IEEE International Conference of Vision Systems (ICVS'06), New York, January 5-7, 2006},
+  year = {2006}
 } 
 ```
 
