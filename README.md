@@ -44,6 +44,15 @@ The fish-eye camera example shows images captured using a camera with "fish-eye"
 python ./fisheye_example.py
 ```
 
+### Homography Example
+
+The homography example shows how to calculate a homography between an object defined in the object coordinates and image of that object seen in the image plane. Extracts R (rotation matrix) and t (translation vector)
+from the calculated homography.
+
+```python
+python ./homography_example.py
+```
+
 ## Test Data
 
 The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). The fish-eye camera data is from the [OCamCalib Toolbox](https://sites.google.com/site/scarabotix/ocamcalib-toolbox/ocamcalib-toolbox-download-page) (University of Zurich).

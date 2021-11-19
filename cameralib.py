@@ -203,7 +203,7 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
         uv = uv[:, ~mask]
 
         # Generate a depth map
-        depth_map[np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int)] = points3D[2, :]
+        depth_map[np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int)] = points[2, :]
 
         # Handle colors, if given
         if image is None:
