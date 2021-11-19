@@ -81,6 +81,10 @@ points3D_h = np.copy(points3D_obj)
 points3D_h[-1, :] = np.ones([1,4])
 H = hog.dlt_homography(points3D_h, uv)
 
+print('----------------------')
+print('Calculated homography:')
+print(H)
+
 # Extract R_ and t_ from the homography, using K
 # R is 'fully defined', whereas t_ is defined only up to scale
 (R_, t_) = hog.extract_transformation(K, H)
@@ -88,13 +92,16 @@ H = hog.dlt_homography(points3D_h, uv)
 scale = hog.transformation_scale(K, R_, t_, uv[:,1], points3D_obj[:,1])
 t_ *= scale
 
-print('These should be the same')
+print('----------------------')
+print('t and t_ should be the same, t_ is the scaled and extracted translation')
 print('t: ')
 print(t)
 print('t_: ')
 print(t_)
+print('----------------------')
+print('R and R_ should be the same, R_ is the extracted rotation')
 print('R: ')
 print(R)
 print('R_: ')
 print(R_)
-
+print('----------------------')
