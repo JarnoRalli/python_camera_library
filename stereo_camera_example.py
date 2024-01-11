@@ -58,6 +58,8 @@ K_primary, lens_primary, R_primary, t_primary, img_res_primary = read_camera_con
 
 # Read the depth map (i.e. Z-axis) from an OpenEXR file
 Z = cv2.imread('./test_data/stereo_camera/depthMap.exr', cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH)
+if Z is None:
+    print("Did not load the file './test_data/stereo_camera/depthMap.exr' properly, did you do: git lfs pull?")
 
 # Read the primary camera image (rectified)
 left_rectified = cv2.imread('./test_data/stereo_camera/primary_image_rectified.png')

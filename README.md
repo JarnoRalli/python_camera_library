@@ -17,8 +17,7 @@ Here forward projection refers to how 3D points, from the real world, are projec
 
 ## Examples
 
-Before executing the examples, create and activate a Conda virtual environment defined in `./conda_environments/3d-computer-vision.yml`. After cloning the repo, the test data used in the examples needs to be pulled 
-using `git pull` or `git lfs pull`.
+Before executing the examples, create and activate a Conda virtual environment defined in `./conda_environments/3d-computer-vision.yml`. **After cloning the repo, the test data used in the examples needs to be pulled using `git pull` or `git lfs pull`.** Take a look [here](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage) regarding how to install Git LFS.
 
 ### KITTI Example
 
@@ -69,7 +68,7 @@ python ./homography_example.py
 The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). The fish-eye camera data is from the [OCamCalib Toolbox](https://sites.google.com/site/scarabotix/ocamcalib-toolbox/ocamcalib-toolbox-download-page) (University of Zurich).
 
 For convenience, I have provided some data from one of the raw KITTI datasets, and a test image from the OCamCalib Toolbox. The stereo camera data contains a pair of rectified stereo camera images, along with the rectified camera parameters, 
-and a depth map. Actual test data need to be pulled using `git pull` or `git lfs pull`.
+and a depth map. **The test data needs to be pulled using `git pull` or `git lfs pull`**.
 
 KITTI lidar                     |  Stereo camera 3D-reconstruction
 :--------------------------------:|:-------------------------:
