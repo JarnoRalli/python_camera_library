@@ -17,6 +17,7 @@ import cameralib
 import open3d as o3d
 from pathlib import Path
 import sys
+import os
 
 def read_camera_configuration(file_name: str):
     """Reads a camera configuration file.
@@ -49,6 +50,7 @@ def read_camera_configuration(file_name: str):
 #--------------
 # Test program
 #--------------
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
 
 # Read right camera (rectified) parameters from a file
 K_primary, lens_primary, R_primary, t_primary, img_res_primary = read_camera_configuration(
