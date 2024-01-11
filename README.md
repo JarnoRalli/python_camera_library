@@ -4,16 +4,16 @@ This project demonstrates a simple pin-hole camera library, together with forwar
 implementation of an omnidirectional camera model that can be used, for example, for converting fish-eye images into pin-hole camera images.
 Here forward projection refers to how 3D points, from the real world, are projected onto a pinhole camera, and the image plane. Similarly backward projection refers to the opposite, i.e. back projecting image points, as seen in the image plane, back to the 3D world.
 
-Files
+**Files**
 * Camera library `./cameralib.py`
 * Omnidirectional camera library `./omnidirectional_camera.py`
 * KITTI examples `./kitti_example.py`
 * Stereo camera examples `./stereo_camera_example.py`
 * Fish-eye camera remapping into a pin-hole camera `./fisheye_example.py`
 
-Directories
-* `./conda_environments/` contains a YAML file for generating a Conda environment that can be used to execute the examples
-* `./test_data/` contains test data used in the examples
+**Directories**
+* [conda_environments](./conda_environments/README.md) contains a YAML file for generating a Conda environment that can be used to execute the examples
+* [test_data](./test_data) contains test data used in the examples
 
 ## Examples
 
@@ -22,7 +22,7 @@ using `git pull` or `git lfs pull`.
 
 ### KITTI Example
 
-The KITTI example demonstrates how lidar generated point clouds can be transformed to different coordinate frames. Outputs PLY files that can be viewed, for example, using CloudCompare or MeshLab.
+The KITTI example demonstrates how lidar generated point clouds can be transformed to different coordinate frames. Outputs PLY files that can be viewed, for example, using [CloudCompare](https://www.danielgm.net/cc/) or [MeshLab](https://www.meshlab.net/).
 
 ```python
 python ./kitti_example.py
