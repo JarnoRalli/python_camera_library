@@ -127,21 +127,25 @@ cam2_lidar, uv, RGB_lidar, depth_map = cameralib.forwardprojectP(lidar_data_cam2
 # Write original lidar points into ply-file
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(lidar_data.transpose())
+print("Writing file: 3d_lidar.ply")
 o3d.io.write_point_cloud("3d_lidar.ply", pcd)
 
 # Write lidar points in cam0 coordinate frame points into ply-file
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(lidar_data_cam0.transpose())
+print("Writing file: 3d_cam0.ply")
 o3d.io.write_point_cloud("3d_cam0.ply", pcd)
 
 # Write lidar points in cam2 coordinate frame points into ply-file
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(lidar_data_cam2.transpose())
+print("Writing file: 3d_cam2.ply")
 o3d.io.write_point_cloud("3d_cam2.ply", pcd)
 
 # Write "filtered" points into ply-file
 pcd = o3d.geometry.PointCloud()
 pcd.points = o3d.utility.Vector3dVector(cam2_lidar.transpose())
 pcd.colors = o3d.utility.Vector3dVector(RGB_lidar / 255)
+print("Writing file: 3d_proj_cam2.ply")
 o3d.io.write_point_cloud("3d_proj_cam2.ply", pcd)
 

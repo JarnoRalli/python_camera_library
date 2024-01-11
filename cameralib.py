@@ -306,7 +306,7 @@ def depthMapTo3D(depthMap: np.array, K: np.array, image=None):
     """
 
     # Generate pixel coordinates and stack them together
-    u, v = np.meshgrid(np.arange(depthMap.shape[1], dtype=np.float), np.arange(depthMap.shape[0], dtype=np.float))
+    u, v = np.meshgrid(np.arange(depthMap.shape[1], dtype=np.float32), np.arange(depthMap.shape[0], dtype=np.float32))
     uv_coords = np.vstack((u.flatten(), v.flatten(), np.ones(u.size)))
 
     # Remove nan:s

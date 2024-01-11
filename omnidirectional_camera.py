@@ -39,7 +39,7 @@ def polynomial_basis(theta: np.array, degree: int) -> np.array:
     if degree < 1:
         raise Exception("Degree has to be 1 or greater!")
 
-    basis = np.empty((degree, theta.size), dtype=np.float)
+    basis = np.empty((degree, theta.size), dtype=np.float32)
     basis[0,] = np.ones((1, theta.size))
 
     for row in range(1, degree):
@@ -87,8 +87,8 @@ def perspective_lut(image_shape: tuple, principal_point: np.array, focal_length:
     # Create image coordinate mesh-grids. As the name implies, these are in the image coordinate system
     # with the origin at the top left corner
     u, v = np.meshgrid(
-        np.arange(image_shape[1], dtype=np.float),
-        np.arange(image_shape[0], dtype=np.float)
+        np.arange(image_shape[1], dtype=np.float32),
+        np.arange(image_shape[0], dtype=np.float32)
     )
 
     # Convert the coordinates into sensor coordinates (origin is at the principal point, and the

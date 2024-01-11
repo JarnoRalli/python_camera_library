@@ -28,6 +28,13 @@ The KITTI example demonstrates how lidar generated point clouds can be transform
 python ./kitti_example.py
 ```
 
+Above code generates the following PLY files:
+
+* 3d_cam0.ply
+* 3d_cam2.ply
+* 3d_lidar.ply
+* 3d_proj_cam2.ply
+
 ### Stereo Camera Example
 
 The stereo camera example demonstrates how a X- and Y-coordinates can be generated based on a depth map (Z-coordinate). Outputs a PLY file that can be viewed, for example, using CloudCompare or MeshLab.
@@ -35,6 +42,10 @@ The stereo camera example demonstrates how a X- and Y-coordinates can be generat
 ```python
 python ./stereo_camera_example.py
 ```
+
+Above code generate the following PLY file:
+
+* stereo_camera.ply
 
 ### Fish-eye Camera Example
 
