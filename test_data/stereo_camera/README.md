@@ -1,7 +1,7 @@
 # Stereo Camera
 
 This data set has been generated using a stereo camera. Left camera is the primary camera, whereas right camera is the
-secondary camera. 
+secondary camera.
 
 Primary image                     |  Secondary image
 :--------------------------------:|:-------------------------:

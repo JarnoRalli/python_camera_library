@@ -12,4 +12,5 @@ dependencies:
         - pykitti
         - open3d
         - opencv-python-headless
+        - pre-commit
 

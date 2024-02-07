@@ -5,16 +5,18 @@ __maintainer__ = "Jarno Ralli"
 __email__ = "jarno@ralli.fi"
 __status__ = "Development"
 
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-#INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-#IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-#OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-#OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+from typing import Optional, Tuple
 
-def homogenise(points: np.array):
+
+def homogenise(points: np.ndarray) -> np.ndarray:
     """Converts non-homogeneous 2D or 3D coordinates into homogeneous coordinates.
 
     For example
@@ -24,17 +26,19 @@ def homogenise(points: np.array):
 
     Parameters
     ----------
-    points : numpy.array, shape (dimensions, nr_points)
+    points : np.ndarray
+        Points to be homogenized, 2xnum_points
 
     Returns
-    --------
-    points : numpy.array, shape (dimensions+1, nr_points)
+    -------
+    np.ndarray
+        Homogenized points, 3xnum_points
     """
 
     return np.concatenate((points, np.ones((1, points.shape[1]))), axis=0)
 
 
-def concatenateRt(R: np.array, t: np.array):
+def concatenateRt(R: np.array, t: np.ndarray) -> np.ndarray:
     """Concatenates a rotation matrix R and a translation vector t into a transformation matrix T.
 
     The outcome is as follows:
@@ -43,45 +47,50 @@ def concatenateRt(R: np.array, t: np.array):
 
     Parameters
     ----------
-    R : numpy.array, shape (3, 3)
-        A rotation matrix
-
-    t : numpy.array, shape (3, 1)
-        A translation vector
+    R : np.array
+        Rotation matrix, 3x3.
+    t : np.ndarray
+        Translation vector, 3x1.
 
     Returns
     -------
-    numpy.array, shape (3, 4)
-        Transformation matrix
+    np.ndarray
+        Transformation matrix, 3x4.
     """
 
     return np.concatenate((np.hstack((R, t)), np.array([[0, 0, 0, 1]])), axis=0)
 
 
-def transform(T: np.array, points: np.array):
+def transform(T: np.ndarray, points: np.ndarray) -> np.ndarray:
     """Apply transformation T to 3D points.
 
     For example, if the transformation T is defined as follows:
     [ R      | t]
     [[0 0 0] | 1]
+
     , where R is a 3x3 rotation matrix and t is a 3x1 translation vector,
     then the results is as follows:
+
     [ R      | t] * [P]
     [[0 0 0] | 1]   [1]
-    , where P is a 3xn vector of n points.
+    , where P is a 3xn vector of n points. 3D points P are homogenized automatically.
 
     Parameters
-    -----------
-    T : numpy.array, shape (4, 4)
-            Transformation matrix
-
-    points : numpy.array, shape (3, num_points)
-            Points to be transformed
+    ----------
+    T : np.ndarray
+        Transformation matrix, 4x4
+    points : np.ndarray
+        3D points to be transformed, 3xnum_points
 
     Returns
     -------
-    numpy.array, shape (3, num_points)
-            Transformed points
+    np.ndarray
+        Transformed points, 3xnum_points
+
+    Raises
+    ------
+    Exception
+        If the transformation fails an exception is thrown
     """
 
     try:
@@ -89,39 +98,51 @@ def transform(T: np.array, points: np.array):
         points = np.matmul(T, points)
         return points[:3, :]
     except Exception as e:
+        print(f"transform-function raised an exception: {e}")
         raise
 
 
-def backproject(uv: np.array, K: np.array, normalize=False):
+def backproject(
+    uv: np.ndarray, K: np.ndarray, normalize: Optional[bool] = False
+) -> np.ndarray:
     """Back projects 2D pixel coordinates, defined in image coordinates, into 3D direction vectors,
-    defined in the camera coordinate system. The direction vectors are defined by the origin of 
+    defined in the camera coordinate system. The direction vectors are defined by the origin of
     the camera and the pixel position (u, v).
-    
+
     If the resulting vector is not normalized, then the output vector is xi + yj + 1k.
     3D position [X, Y, Z] can be calculated, if we know the depth
     (i.e. Z-coordinate), as follows: X = x*Z, Y = y*Z and Z = Z.
 
-    If the resulting vector is normalized, then the output vector is 
+    If the resulting vector is normalized, then the output vector is
     (xn*i + yn*i + zn*i) = (x*i + y*j + z*k)/|x*i + y*j + z*k|.
     3D position [X, Y, Z] can be calculated, based on the length of the ray r, as follows:
     X = xn*r, Y = yn*r, Z = zn*r.
 
     Parameters
     ----------
-    uv : numpy array
+    uv : np.ndarray
         Homogeneous pixel coordinates [u1, u2, u3, ...; v1, v2, v3, ...; 1, 1, 1, ...]
-    K : numpy array
-        Camera calibration matrix [fx, s, px; 0, fy, py; 0 0 1]
-
-    normalize : boolean, optional (defaults to False)
-        False = do not normalize the output vector
-        True = normalize the output vector
+    K : np.ndarray
+        3x3 camera calibration matrix [fx, s, px; 0, fy, py; 0 0 1]
+    normalize : Optional[bool], optional
+        _description_, by default False
 
     Returns
     -------
-    numpy array
-        If not normalized: 3D direction vector, in metric space, [x1, x2, x3, ...; y1, y2, y3, ...; 1, 1, 1, ...]
-        If normalized: 3D direction vectors, in metric space, [xn1, xn2, xn3, ...; yn1, yn2, yn3, ...; zn1, zn2, zn3, ...]
+    np.ndarray
+        - If `normalize=False`, 3D direction vectors [x1, x2, x3, ...; y1, y2, y3, ...; 1, 1, 1, ...]
+        - If `normalize=True`, normalized 3D direction vectors [xn1, xn2, xn3, ...; yn1, yn2, yn3, ...; zn1, zn2, zn3, ...]
+
+    Raises
+    ------
+    Exception
+        An exception is thrown if the K matrix is not of np.ndarray type
+    Exception
+        An exception is thrown if the K matrix is not of shape 3x3
+    Exception
+        An exception is thrown if the uv matrix is not of np.ndarray type
+    Exception
+       An exception is thrown if the uv matrix doesn't have 3 rows (is not homogeneous)
     """
 
     # Verify that camera matrix K is a numpy matrix
@@ -136,25 +157,82 @@ def backproject(uv: np.array, K: np.array, normalize=False):
         raise Exception("'uv' matrix is expected to be of numpy type")
     # Verify that uv vector is 'homogeneous'
     if uv.shape[0] != 3:
-        raise Exception("'uv' matrix needs to be homogeneous: [u;v;1]\'")
+        raise Exception("'uv' matrix needs to be homogeneous: [u;v;1]'")
 
     result = np.matmul(np.linalg.inv(K), uv)
     # Normalize homogeneous coordinates
-    result[0,] = result[0,] / result[2,]
-    result[1,] = result[1,] / result[2,]
-    result[2,] = result[2,] / result[2,]
+    result[0,] = (
+        result[
+            0,
+        ]
+        / result[
+            2,
+        ]
+    )
+    result[1,] = (
+        result[
+            1,
+        ]
+        / result[
+            2,
+        ]
+    )
+    result[2,] = (
+        result[
+            2,
+        ]
+        / result[
+            2,
+        ]
+    )
 
     if normalize:
-        magnitude = np.sqrt(np.power(result[0,], 2) + np.power(result[1,], 2) + np.power(result[2,], 2))
-        result[0,] = np.divide(result[0,], magnitude)
-        result[1,] = np.divide(result[1,], magnitude)
-        result[2,] = np.divide(result[2,], magnitude)
+        magnitude = np.sqrt(
+            np.power(
+                result[
+                    0,
+                ],
+                2,
+            )
+            + np.power(
+                result[
+                    1,
+                ],
+                2,
+            )
+            + np.power(
+                result[
+                    2,
+                ],
+                2,
+            )
+        )
+        result[0,] = np.divide(
+            result[
+                0,
+            ],
+            magnitude,
+        )
+        result[1,] = np.divide(
+            result[
+                1,
+            ],
+            magnitude,
+        )
+        result[2,] = np.divide(
+            result[
+                2,
+            ],
+            magnitude,
+        )
 
     return result
 
 
-def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
-    """Project 3D points, defined by [X Y Z]', onto an image plane of a camera defined by
+def forwardprojectK(
+    points: np.ndarray, K: np.ndarray, image_size: Tuple, image: Optional[bool] = None
+) -> Tuple[np.ndarray, ...]:
+    """Projects 3D points [X Y Z]' onto an image plane of a camera defined by
     a 3x3 camera matrix K.
 
     Forward projects 3D points onto an image plane of a camera defined by the 3x3 camera matrix K.
@@ -164,21 +242,23 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
 
     Parameters
     ----------
-    points : numpy.array, shape (3, nr_points)
-            3D points
-    K : numpy array, shape (3, 3)
-            Camera intrinsic matrix
-    image_size : tuple
-            Image size, (rows, cols)
-    image : numpy.array, optional
-            Image used for defining colors for each point (default is None).
+    points : np.ndarray
+        3D points, 3xnr_points
+    K : np.ndarray
+        Camera calibration matrix [fx, s, px; 0, fy, py; 0 0 1], 3x3
+    image_size : Tuple
+        (rows, cols)
+    image : Optional[bool], optional
+        Image used for defining colors for each projected point, by default None
 
     Returns
     -------
-    (3D points, uv-coordinates, depth map) : numpy array
-        If no image is given (i.e. is None). Shapes are (3, nr_points), (3, nr_points) and (rows, cols)
-    (3D points, uv-coordinates, RGB, depth map) : numpy array
-        If image is given. Shapes are (3, nr_points), (3, nr_points), (3, nr_points) and (rows, cols)"""
+    Tuple[np.ndarray, ...]
+        - If no input image is given, output is (3D points, uv-coordinates, depth map).
+          Shapes are (3, nr_points), (3, nr_points) and (rows, cols)
+        - If an input image is given, output is (3D points, uv-coordinates, RGB, depth map).
+          Shapes are (3, nr_points), (3, nr_points), (3, nr_points) and (rows, cols)
+    """
 
     # Convert the image_size into a tuple. It might already be a tuple, but let's just make sure
     image_size = (int(image_size[0]), int(image_size[1]))
@@ -198,25 +278,37 @@ def forwardprojectK(points: np.array, K: np.array, image_size, image=None):
         uv[2, :] /= uv[2, :]
 
         # Mask out points that don't fall withing the given image (i.e. are outside of FOV)
-        mask = (uv[0, :] < 0) | (uv[0, :] > (image_size[1] - 1)) | (uv[1, :] < 0) | (uv[1, :] > (image_size[0] - 1))
+        mask = (
+            (uv[0, :] < 0)
+            | (uv[0, :] > (image_size[1] - 1))
+            | (uv[1, :] < 0)
+            | (uv[1, :] > (image_size[0] - 1))
+        )
         points = points[:, ~mask]
         uv = uv[:, ~mask]
 
         # Generate a depth map
-        depth_map[np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int)] = points[2, :]
+        depth_map[
+            np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int)
+        ] = points[2, :]
 
         # Handle colors, if given
         if image is None:
             return points, uv, depth_map
         else:
-            RGB = image[np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int), :]
+            RGB = image[
+                np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int), :
+            ]
             return points, uv, RGB, depth_map
     except Exception as e:
+        print(f"forwardprojectK function raised exception: {e}")
         raise
 
 
-def forwardprojectP(points: np.array, P: np.array, image_size, image=None):
-    """Project 3D points, defined by [X Y Z]', onto an image plane of a camera defined by
+def forwardprojectP(
+    points: np.ndarray, P: np.ndarray, image_size: Tuple, image: Optional[bool] = None
+) -> Tuple[np.ndarray, ...]:
+    """Projects 3D points [X Y Z]' onto an image plane of a camera defined by
     a 3x4 projection matrix P.
 
     Forward projects 3D points onto an image plane of a camera defined by the 3x4 projection matrix P.
@@ -226,21 +318,22 @@ def forwardprojectP(points: np.array, P: np.array, image_size, image=None):
 
     Parameters
     ----------
-    points : numpy.array, shape (3, nr_points)
-            3D points
-    P : numpy array, shape (3, 4)
-            Camera projection matrix P = K[R | t]
-    image_size : tuple
-            Image size, (rows, cols)
-    image : numpy.array, optional
-            Image used for defining colors for each point (default is None).
+    points : np.ndarray
+        3D points, 3xnum_points
+    P : np.ndarray
+        Camera projection matrix P = K[R | t], 3x4
+    image_size : Tuple
+        Image size (rows, cols)
+    image : Optional[bool], optional
+        Image used for defining colors for each point, by default None
 
     Returns
     -------
-    (3D points, uv-coordinates, depth map) : numpy array
-        If no image is given (i.e. is None). Shapes are (3, nr_points), (3, nr_points) and (rows, cols)
-    (3D points, uv-coordinates, RGB, depth map) : numpy array
-        If image is given. Shapes are (3, nr_points), (3, nr_points), (3, nr_points) and (rows, cols)
+    Tuple[np.ndarray, ...]
+        - If no image is given, output is (3D points, uv-coordinates, depth map).
+          Shapes are (3, nr_points), (3, nr_points) and (rows, cols)
+        - If image is given, output is (3D points, uv-coordinates, RGB, depth map).
+          Shapes are (3, nr_points), (3, nr_points), (3, nr_points) and (rows, cols)
     """
 
     # Convert the image_size into a tuple. It might already be a tuple, but let's just make sure
@@ -265,48 +358,59 @@ def forwardprojectP(points: np.array, P: np.array, image_size, image=None):
         uv[2, :] /= uv[2, :]
 
         # Mask out points that don't fall withing the given image (i.e. are outside of FOV)
-        mask = (uv[0, :] < 0) | (uv[0, :] > (image_size[1] - 1)) | (uv[1, :] < 0) | (uv[1, :] > (image_size[0] - 1))
+        mask = (
+            (uv[0, :] < 0)
+            | (uv[0, :] > (image_size[1] - 1))
+            | (uv[1, :] < 0)
+            | (uv[1, :] > (image_size[0] - 1))
+        )
         points = points[:, ~mask]
         uv = uv[:, ~mask]
 
         # Generate a depth map
-        depth_map[np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int)] = points[2, :]
+        depth_map[
+            np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int)
+        ] = points[2, :]
 
         # Handle colors, if given
         if image is None:
             return points[:3, :], uv, depth_map
         else:
-            RGB = image[np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int), :]
+            RGB = image[
+                np.round(uv[1, :]).astype(int), np.round(uv[0, :]).astype(int), :
+            ]
             return points[:3, :], uv, RGB, depth_map
     except Exception as e:
+        print(f"forwardprojectP function raised exception: {e}")
         raise
 
 
-def depthMapTo3D(depthMap: np.array, K: np.array, image=None):
+def depthMapTo3D(
+    depthMap: np.ndarray, K: np.ndarray, image: Optional[np.ndarray] = None
+) -> Tuple[np.ndarray, ...]:
     """Backprojects a depth map, defined by the Z-coordinate values, into 3D points [X Y Z]'.
 
     Parameters
-    -----------
-    depthMap : numpy.array
-            depth map containing Z-coordinate values.
-
-    K : numpy.array, shape (3, 3)
-            Camera intrinsic parameters.
-
-    image : numpy.array, optional (defaults to None)
-            RGB image. If given, RGB values corresponding to 3D points are output
+    ----------
+    depthMap : np.ndarray
+        Depth map, i.e. contains the Z-coordinates for each point.
+    K : np.ndarray
+        Camera calibration matrix [fx, s, px; 0, fy, py; 0 0 1], 3x3.
+    image : Optional[np.ndarray], optional
+        RGB image, if given RGB values corresponding to 3D points are returned, by default None
 
     Returns
-    --------
-    (3D points, uv) : numpy array
-        If no image is given, then the 3rd coordinates, the corresponding uv (image) coordinates are returned
-    (3D points, uv, RGB)
-        If an image is given, then the 3rd coordinates, the corresponding uv (image) coordinates, and the corresponding
-        RGB values are returned
+    -------
+    Tuple[np.ndarray, ...]
+        - If no image is given, output is (3D_coords, uv_coord)
+        - If an image is given, output is (3D_coords, uv_coords, RGB)
     """
 
     # Generate pixel coordinates and stack them together
-    u, v = np.meshgrid(np.arange(depthMap.shape[1], dtype=np.float32), np.arange(depthMap.shape[0], dtype=np.float32))
+    u, v = np.meshgrid(
+        np.arange(depthMap.shape[1], dtype=np.float32),
+        np.arange(depthMap.shape[0], dtype=np.float32),
+    )
     uv_coords = np.vstack((u.flatten(), v.flatten(), np.ones(u.size)))
 
     # Remove nan:s

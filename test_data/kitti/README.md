@@ -9,7 +9,7 @@ This test data is from the [KITTI Vision Benchmark Suite](http://www.cvlibs.net/
   title = {Vision meets Robotics: The KITTI Dataset},
   journal = {International Journal of Robotics Research (IJRR)},
   year = {2013}
-} 
+}
 ```
 
 The data, and the calibration files, are available from:
