@@ -5,16 +5,18 @@ __maintainer__ = "Jarno Ralli"
 __email__ = "jarno@ralli.fi"
 __status__ = "Development"
 
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-#INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-#IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-#OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-#OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
+from typing import Tuple
 
-def dlt_homography(x: np.array, xp: np.array):
+
+def dlt_homography(x: np.ndarray, xp: np.ndarray) -> np.ndarray:
     """
     Calculates a 2D homography 3x3 matrix H, such that xp = Hx. Uses DLT, direct linear transformation, for calculating the solution.
 
@@ -38,7 +40,7 @@ def dlt_homography(x: np.array, xp: np.array):
         raise Exception("x and xp must be of the same size")
 
     nr_points = x.shape[1]
-    
+
     if nr_points < 4:
         raise Exception("at least 4 points are needed")
 
@@ -60,16 +62,20 @@ def dlt_homography(x: np.array, xp: np.array):
     if np.isclose(xp_std[1], 0.0):
         raise Exception("standard deviation of yp is zero or close to zero")
 
-    T = np.array([
-        [1.0/x_std[0], 0, -x_mean[0]/x_std[0]],
-        [0, 1.0/x_std[1], -x_mean[1]/x_std[1]],
-        [0, 0, 1]
-    ])
-    Tp = np.array([
-        [1.0/xp_std[0], 0, -xp_mean[0]/xp_std[0]],
-        [0, 1.0/xp_std[1], -xp_mean[1]/xp_std[1]],
-        [0, 0, 1]
-    ])
+    T = np.array(
+        [
+            [1.0 / x_std[0], 0, -x_mean[0] / x_std[0]],
+            [0, 1.0 / x_std[1], -x_mean[1] / x_std[1]],
+            [0, 0, 1],
+        ]
+    )
+    Tp = np.array(
+        [
+            [1.0 / xp_std[0], 0, -xp_mean[0] / xp_std[0]],
+            [0, 1.0 / xp_std[1], -xp_mean[1] / xp_std[1]],
+            [0, 0, 1],
+        ]
+    )
 
     x_n = T @ x
     xp_n = Tp @ xp
@@ -84,10 +90,15 @@ def dlt_homography(x: np.array, xp: np.array):
         yp = xp_n[1, i]
         wp = xp_n[2, i]
 
-        A = np.vstack((A, 
-            [[0, 0, 0, -wp*x, -wp*y, -wp*w, yp*xp, yp*y, yp*w],
-            [wp*x, wp*y, wp*w, 0, 0, 0, -xp*xp, -xp*y, -xp*w]]
-            ))
+        A = np.vstack(
+            (
+                A,
+                [
+                    [0, 0, 0, -wp * x, -wp * y, -wp * w, yp * xp, yp * y, yp * w],
+                    [wp * x, wp * y, wp * w, 0, 0, 0, -xp * xp, -xp * y, -xp * w],
+                ],
+            )
+        )
 
     # DLT solution to minimizing ||Ah|| with the contraint ||h|| = 1, since h=0 is
     # not of practical use
@@ -96,11 +107,14 @@ def dlt_homography(x: np.array, xp: np.array):
 
     # De-normalization
     H = np.linalg.inv(Tp) @ H @ T
-    H = H/H[-1, -1]
+    H = H / H[-1, -1]
 
     return H
 
-def extract_transformation(K: np.array, H: np.array, xp = None, x = None):
+
+def extract_transformation(
+    K: np.ndarray, H: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Extract rotation and translation (up to scale) from a homography matrix.
 
@@ -130,7 +144,7 @@ def extract_transformation(K: np.array, H: np.array, xp = None, x = None):
     r2 = H_[:, 1]
     t = H_[:, 2]
     t /= np.linalg.norm(t)
-    t = t.reshape(3,1)
+    t = t.reshape(3, 1)
 
     # Orthogonalize
     # We keep r1 fixed and project r2 to r1, i.e. proj = dot(r2,r1) / dot(r1, r1) * r1 and then
@@ -143,19 +157,24 @@ def extract_transformation(K: np.array, H: np.array, xp = None, x = None):
     r1 /= np.linalg.norm(r1)
     r2 /= np.linalg.norm(r2)
     r3 /= np.linalg.norm(r3)
-    R = np.hstack((r1.reshape(-1,1), r2.reshape(-1,1), r3.reshape(-1,1)))
+    R = np.hstack((r1.reshape(-1, 1), r2.reshape(-1, 1), r3.reshape(-1, 1)))
 
     # Rank of the rotation matrix needs to be 3, otherwise it does not span a 3D space
     if not np.linalg.matrix_rank(R) == 3:
-        raise Exception("rank of the rotation matrix is not 3, i.e. it does not span a 3D space")
+        raise Exception(
+            "rank of the rotation matrix is not 3, i.e. it does not span a 3D space"
+        )
 
     # Test for R*R' = I
-    if not np.isclose(R @ np.transpose(R), np.eye(3) ).all():
+    if not np.isclose(R @ np.transpose(R), np.eye(3)).all():
         raise Exception("R*R' is not I, therefore R is not a rotation matrix")
 
     return R, t
 
-def transformation_scale(K: np.array, R: np.array, t: np.array, uv, x):
+
+def transformation_scale(
+    K: np.ndarray, R: np.ndarray, t: np.ndarray, uv: np.ndarray, x: np.ndarray
+) -> float:
     """
     Solves for a scale factor of a translation vector when K, R, t/|t|, uv and x are known.
 
@@ -186,8 +205,10 @@ def transformation_scale(K: np.array, R: np.array, t: np.array, uv, x):
         Scale of the translation vector
     """
 
-    if np.isclose(x.reshape(3,1), np.zeros([3,1])).all():
-        raise Exception("x = [0 0 0]' would lead to a trivial solution, where scale would be 0.0")
+    if np.isclose(x.reshape(3, 1), np.zeros([3, 1])).all():
+        raise Exception(
+            "x = [0 0 0]' would lead to a trivial solution, where scale would be 0.0"
+        )
 
     if K.shape != (3, 3):
         raise Exception("K must be a 3x3 matrix")
@@ -202,7 +223,7 @@ def transformation_scale(K: np.array, R: np.array, t: np.array, uv, x):
         raise Exception("x must have 3-components")
 
     # Test for R*R' = I
-    if not np.isclose(R @ np.transpose(R), np.eye(3) ).all():
+    if not np.isclose(R @ np.transpose(R), np.eye(3)).all():
         raise Exception("R*R' is not I, therefore R is not a rotation matrix")
 
     t = t.flatten()
@@ -213,13 +234,12 @@ def transformation_scale(K: np.array, R: np.array, t: np.array, uv, x):
 
     v1 = np.linalg.inv(K) @ uv
     v2 = np.cross(v1, v3)
-    
+
     v1 /= np.linalg.norm(v1)
     v2 /= np.linalg.norm(v2)
-    
-    A = np.hstack((v1.reshape(3,1), v2.reshape(3,1), -v3.reshape(3,1)))
-    b = R @ x.reshape(3,1)
+
+    A = np.hstack((v1.reshape(3, 1), v2.reshape(3, 1), -v3.reshape(3, 1)))
+    b = R @ x.reshape(3, 1)
     s = np.linalg.solve(A, b)
 
     return s[-1]
-

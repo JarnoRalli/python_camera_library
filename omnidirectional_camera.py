@@ -40,19 +40,29 @@ def polynomial_basis(theta: np.array, degree: int) -> np.array:
         raise Exception("Degree has to be 1 or greater!")
 
     basis = np.empty((degree, theta.size), dtype=np.float32)
-    basis[0,] = np.ones((1, theta.size))
+    basis[
+        0,
+    ] = np.ones((1, theta.size))
 
     for row in range(1, degree):
-        basis[row,] = theta
+        basis[
+            row,
+        ] = theta
 
     for row in range(2, degree):
-        basis[row,] *= basis[row - 1,]
+        basis[row,] *= basis[
+            row - 1,
+        ]
 
     return basis
 
 
-def perspective_lut(image_shape: tuple, principal_point: np.array, focal_length: float,
-                    model_coefficients: np.array) -> tuple:
+def perspective_lut(
+    image_shape: tuple,
+    principal_point: np.array,
+    focal_length: float,
+    model_coefficients: np.array,
+) -> tuple:
     """
     Calculates a look-up-table (LUT) for converting images captured with an omnidirectional camera, described by
     the model coefficients, into perspective camera images (i.e. pin-hole camera). The relation between the 3D half-ray
@@ -60,7 +70,7 @@ def perspective_lut(image_shape: tuple, principal_point: np.array, focal_length:
     polynomial basis and the model coefficients. The look-up-table values can be used for converting images into
     perspective camera images, for example, by using OpenCV's remap function:
     cv2.remap(image, u, v, cv2.INTER_LINEAR)
-    
+
     For more information, take a look at the paper:
     "A Toolbox for Easily Calibrating Omnidirectional Cameras", D. Scaramuzza, A. Martinelli and R. Siegwart.
 
@@ -88,19 +98,28 @@ def perspective_lut(image_shape: tuple, principal_point: np.array, focal_length:
     # with the origin at the top left corner
     u, v = np.meshgrid(
         np.arange(image_shape[1], dtype=np.float32),
-        np.arange(image_shape[0], dtype=np.float32)
+        np.arange(image_shape[0], dtype=np.float32),
     )
 
     # Convert the coordinates into sensor coordinates (origin is at the principal point, and the
     # sensor is a focal length distance away from the lens optical centre)
     u -= principal_point[0]
     v -= principal_point[1]
-    sensor_coords = np.vstack((u.flatten(), v.flatten(), np.ones(u.size) * focal_length))
+    sensor_coords = np.vstack(
+        (u.flatten(), v.flatten(), np.ones(u.size) * focal_length)
+    )
 
     # Calculate the polynomial basis for the camera/lens model
     # rho is the Euclidean distance of the sensor position from the principal point
     rho = np.sqrt(np.square(sensor_coords[0, :]) + np.square(sensor_coords[1, :]))
-    theta = np.arctan(np.divide(-sensor_coords[2,], rho))
+    theta = np.arctan(
+        np.divide(
+            -sensor_coords[
+                2,
+            ],
+            rho,
+        )
+    )
     # calculate the polynomial basis, based on the angle
     basis = polynomial_basis(theta, model_coefficients.size)
 
@@ -108,8 +127,20 @@ def perspective_lut(image_shape: tuple, principal_point: np.array, focal_length:
     r = np.sum(r, axis=0)
     r /= rho
 
-    x_result = principal_point[0] + sensor_coords[0,] * r
-    y_result = principal_point[1] + sensor_coords[1,] * r
+    x_result = (
+        principal_point[0]
+        + sensor_coords[
+            0,
+        ]
+        * r
+    )
+    y_result = (
+        principal_point[1]
+        + sensor_coords[
+            1,
+        ]
+        * r
+    )
     x_result = x_result.reshape((image_shape[0], image_shape[1]))
     y_result = y_result.reshape((image_shape[0], image_shape[1]))
 

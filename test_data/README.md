@@ -1,7 +1,8 @@
 # Test Data
 
-The following directories contain test data that can be used to test the camera libraries:
+Following test data is available (needs to be pulled with git lfs):
 
-* `./kitti/`
-* `./stereo_camera/`
-* `./fish_eye_camera/`
+* [kitti](./kitti/README.md)
+* [stereo_camera](./stereo_camera/README.md)
+* [fish_eye_camera](./fish_eye_camera/README.md)
+

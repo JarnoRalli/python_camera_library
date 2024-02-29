@@ -9,7 +9,7 @@ This test image is from the [OCamCalib Toolbox](https://sites.google.com/site/sc
   title = {A Flexible Technique for Accurate Omnidirectional Camera Calibration and Structure from Motion},
   journal = {Proceedings of IEEE International Conference of Vision Systems (ICVS'06), New York, January 5-7, 2006},
   year = {2006}
-} 
+}
 ```
 
 The data, and the calibration files, are available from:
