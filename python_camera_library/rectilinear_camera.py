@@ -14,92 +14,7 @@ __status__ = "Development"
 
 import numpy as np
 from typing import Optional, Tuple
-
-
-def homogenise(points: np.ndarray) -> np.ndarray:
-    """Converts non-homogeneous 2D or 3D coordinates into homogeneous coordinates.
-
-    For example
-    [x1 x2 x3]    [x1 x2 x3]
-    [y1 y2 y3] -> [y1 y2 y3]
-                  [1  1  1]
-
-    Parameters
-    ----------
-    points : np.ndarray
-        Points to be homogenized, 2xnum_points
-
-    Returns
-    -------
-    np.ndarray
-        Homogenized points, 3xnum_points
-    """
-
-    return np.concatenate((points, np.ones((1, points.shape[1]))), axis=0)
-
-
-def concatenateRt(R: np.array, t: np.ndarray) -> np.ndarray:
-    """Concatenates a rotation matrix R and a translation vector t into a transformation matrix T.
-
-    The outcome is as follows:
-    [ R      | t]
-    [[0 0 0] | 1]
-
-    Parameters
-    ----------
-    R : np.array
-        Rotation matrix, 3x3.
-    t : np.ndarray
-        Translation vector, 3x1.
-
-    Returns
-    -------
-    np.ndarray
-        Transformation matrix, 3x4.
-    """
-
-    return np.concatenate((np.hstack((R, t)), np.array([[0, 0, 0, 1]])), axis=0)
-
-
-def transform(T: np.ndarray, points: np.ndarray) -> np.ndarray:
-    """Apply transformation T to 3D points.
-
-    For example, if the transformation T is defined as follows:
-    [ R      | t]
-    [[0 0 0] | 1]
-
-    , where R is a 3x3 rotation matrix and t is a 3x1 translation vector,
-    then the results is as follows:
-
-    [ R      | t] * [P]
-    [[0 0 0] | 1]   [1]
-    , where P is a 3xn vector of n points. 3D points P are homogenized automatically.
-
-    Parameters
-    ----------
-    T : np.ndarray
-        Transformation matrix, 4x4
-    points : np.ndarray
-        3D points to be transformed, 3xnum_points
-
-    Returns
-    -------
-    np.ndarray
-        Transformed points, 3xnum_points
-
-    Raises
-    ------
-    Exception
-        If the transformation fails an exception is thrown
-    """
-
-    try:
-        points = homogenise(points)
-        points = np.matmul(T, points)
-        return points[:3, :]
-    except Exception as e:
-        print(f"transform-function raised an exception: {e}")
-        raise
+from python_camera_library import utils
 
 
 def backproject(
@@ -342,7 +257,7 @@ def forwardprojectP(
 
     try:
         # Convert points into homogeneous form
-        points = homogenise(points)
+        points = utils.homogenise(points)
 
         # Project points to image
         uv = np.matmul(P, points)

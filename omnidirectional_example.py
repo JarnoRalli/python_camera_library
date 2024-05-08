@@ -1,5 +1,5 @@
 import numpy as np
-import omnidirectional_camera as ocam
+from python_camera_library import omnidirectional_camera as ocam
 import cv2
 import matplotlib.pyplot as plt
 
@@ -24,7 +24,7 @@ model_coefficients = np.array(
 image = cv2.imread(".//test_data/fish_eye_camera/test_fisheye.jpg")
 
 # Calculate the look-up-table for converting the image into perspective camera image
-x, y = ocam.perspective_lut(
+x, y = ocam.omnidirectional_to_perspective_lut(
     image.shape, (505.480427, 381.777786), focal_length, model_coefficients
 )
 

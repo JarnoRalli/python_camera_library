@@ -13,4 +13,7 @@ dependencies:
         - open3d
         - opencv-python-headless
         - pre-commit
+        - build
+        - pytest
+        - jupyter
 

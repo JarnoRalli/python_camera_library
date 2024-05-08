@@ -13,7 +13,7 @@ __status__ = "Development"
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import cv2
-import cameralib
+from python_camera_library import rectilinear_camera
 import open3d as o3d
 from pathlib import Path
 import sys
@@ -78,7 +78,7 @@ if Z is None:
 left_rectified = cv2.imread("./test_data/stereo_camera/primary_image_rectified.png")
 
 # Obtain X- and Y-coordinates based on the depth map
-XYZ, uv, RGB = cameralib.depthMapTo3D(Z, K_primary, left_rectified)
+XYZ, uv, RGB = rectilinear_camera.depthMapTo3D(Z, K_primary, left_rectified)
 
 # Write the XYZ points, with color information, into a ply-file
 pcd = o3d.geometry.PointCloud()
@@ -86,3 +86,7 @@ pcd.points = o3d.utility.Vector3dVector(XYZ.transpose())
 pcd.colors = o3d.utility.Vector3dVector((RGB / 255).transpose())
 print("Writing file: stereo_camera.ply")
 o3d.io.write_point_cloud("stereo_camera.ply", pcd)
+
+# Show the point cloud for the user
+print("Visualizing the point cloud")
+o3d.visualization.draw_geometries([pcd])

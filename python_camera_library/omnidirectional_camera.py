@@ -15,7 +15,7 @@ __status__ = "Development"
 import numpy as np
 
 
-def polynomial_basis(theta: np.array, degree: int) -> np.array:
+def polynomial_basis(theta: np.ndarray, degree: int) -> np.ndarray:
     """Calculates polynomial basis for the omnidirectional camera model.
 
     Parameters
@@ -57,11 +57,11 @@ def polynomial_basis(theta: np.array, degree: int) -> np.array:
     return basis
 
 
-def perspective_lut(
+def omnidirectional_to_perspective_lut(
     image_shape: tuple,
-    principal_point: np.array,
+    principal_point: np.ndarray,
     focal_length: float,
-    model_coefficients: np.array,
+    model_coefficients: np.ndarray,
 ) -> tuple:
     """
     Calculates a look-up-table (LUT) for converting images captured with an omnidirectional camera, described by
