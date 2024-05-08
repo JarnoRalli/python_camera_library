@@ -13,7 +13,8 @@ __status__ = "Development"
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import cv2
-import cameralib
+from python_camera_library import rectilinear_camera
+from python_camera_library import utils
 import numpy as np
 import open3d as o3d
 
@@ -110,12 +111,12 @@ image_data = np.array(
 RvelTocam0 = extractMatrix(lidar_conf["R"], (3, 3))
 TvelTocam0 = extractMatrix(lidar_conf["T"], (3, 1))
 # Trans_velTocam0 = transform_from_rot_trans(RvelTocam0, TvelTocam0)
-Trans_velTocam0 = cameralib.concatenateRt(RvelTocam0, TvelTocam0)
+Trans_velTocam0 = utils.concatenateRt(RvelTocam0, TvelTocam0)
 
 # Rotation and traslation from camera 0 to camera 2
 Rcam0Tocam2 = extractMatrix(cam_conf["R_02"], (3, 3))
 Tcam0Tocam2 = extractMatrix(cam_conf["T_02"], (3, 1))
-Trans_cam0Tocam2 = cameralib.concatenateRt(Rcam0Tocam2, Tcam0Tocam2)
+Trans_cam0Tocam2 = utils.concatenateRt(Rcam0Tocam2, Tcam0Tocam2)
 
 # Projection matrix from camera 2 to rectified camera 2
 Pcam2 = extractMatrix(cam_conf["P_rect_02"], (3, 4))
@@ -130,13 +131,13 @@ Kcam2rect = np.matmul(Pcam2[:3, :3], Rcam2rect.transpose())
 # print("Kcam rectified 2: " + str(Kcam2rect))
 
 # Transform lidar points to camera 0 coordinate frame
-lidar_data_cam0 = cameralib.transform(Trans_velTocam0, lidar_data)
+lidar_data_cam0 = utils.transform(Trans_velTocam0, lidar_data)
 
 # Transform lidar points from camera0 to camera 2 coordinate frame
-lidar_data_cam2 = cameralib.transform(Trans_cam0Tocam2, lidar_data_cam0)
+lidar_data_cam2 = utils.transform(Trans_cam0Tocam2, lidar_data_cam0)
 
 # Project lidar points into rectified camera 2
-cam2_lidar, uv, RGB_lidar, depth_map = cameralib.forwardprojectP(
+cam2_lidar, uv, RGB_lidar, depth_map = rectilinear_camera.forwardprojectP(
     lidar_data_cam2, Pcam2, im_size_rcam2, image_data
 )
 

@@ -10,8 +10,7 @@ setup(
     packages=find_packages(),
     author="Jarno Ralli",
     author_email="jarno@ralli.fi",
-    description="Projective camera library",
-    py_modules=["cameralib", "homographylib", "omnidirectional_camera"],
+    description="Camera library for different types of cameras",
     license="BSD 3-Clause",
     classifiers=[
         "Intended Audience :: Developers",

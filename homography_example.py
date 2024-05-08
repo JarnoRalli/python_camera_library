@@ -13,56 +13,18 @@ __status__ = "Development"
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-import cameralib as cam
-import homographylib as homog
-
-
-def rotation(rot_z: float, rot_y: float, rot_x: float) -> np.array:
-    """Calculate a 3D rotation, defined by a rotation along the z-, y- and z-axes
-
-    Parameters
-    ----------
-    rot_z : float
-        Rotation with respect the z-axis, in radians
-    rot_y : float
-        Rotation with respect the y-axis, in radians
-    rot_x : float
-        Rotation with respect the x-axis, in radians
-
-    Returns
-    -------
-    numpy.array, shape (3, 3)
-        A 3x3 rotation matrix
-    """
-    rz = np.array(
-        [
-            [np.cos(rot_z), -np.sin(rot_z), 0.0],
-            [np.sin(rot_z), np.cos(rot_z), 0.0],
-            [0.0, 0.0, 1.0],
-        ]
-    )
-    ry = np.array(
-        [
-            [np.cos(rot_y), 0.0, np.sin(rot_y)],
-            [0.0, 1.0, 0.0],
-            [-np.sin(rot_y), 0.0, np.cos(rot_y)],
-        ]
-    )
-    rx = np.array(
-        [
-            [1.0, 0.0, 0.0],
-            [0.0, np.cos(rot_x), -np.sin(rot_x)],
-            [0.0, np.sin(rot_x), np.cos(rot_x)],
-        ]
-    )
-
-    return rz @ ry @ rx
+from python_camera_library import rectilinear_camera as cam
+from python_camera_library import homography as homog
+from python_camera_library import utils
 
 
 # This example tests the homography library. We calculate the homography between 4 3D points (points_object) given in the object coordinate system.
 # points_object are converted into camera coordinate system using points_camera = [R | t] * points_object, and then projected to the image plane uv.
 # After this we extract the rotation matrix R, and the translation vector t/||t||, from the homography. Finally we calculate the scale factor s that,
 # when applied, t == s*t/||t||.
+
+np.set_printoptions(precision=3)
+np.set_printoptions(suppress=True)
 
 # Camera intrinsic matrix
 K = np.array([[100, 0, 150], [0, 100, 150], [0, 0, 1]])
@@ -72,7 +34,7 @@ K = np.array([[100, 0, 150], [0, 100, 150], [0, 0, 1]])
 points3D_obj = np.array([[0, 10, 0, 10], [0, 0, 10, 10], [0, 0, 0, 0]])
 
 # Transformation that moves the object coordinate system
-R = rotation(np.pi / 4, 0, np.pi / 4)
+R = utils.rotation(np.pi / 4, 0, np.pi / 4)
 t = np.array([1, 2, 10]).reshape(3, 1)
 
 # Transformed object coordinates

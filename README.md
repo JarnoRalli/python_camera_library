@@ -1,28 +1,63 @@
-# Python Camera Library
+# 1 Python Camera Library
 
-This project demonstrates a simple pin-hole camera library, together with forward- and back-projection functions, and an
-implementation of an omnidirectional camera model that can be used, for example, for converting fish-eye images into pin-hole camera images.
+This repository demonstrates how several different camera models, such as the rectilinear (pinhole), omnidirectional and the fish-eye camera models operate.
+The rectilinear camera module contains, for example, forward- and back-projection functions, the omnidirectional camera module contains functionality for
+creating look-up-table (LUT) that can be used in interpolation for converting images taken with omnidirectional camera into rectilinear images.
 Here forward projection refers to how 3D points, from the real world, are projected onto a pinhole camera, and the image plane. Similarly backward projection refers to the opposite, i.e. back projecting image points, as seen in the image plane, back to the 3D world.
 
-**Files**
-* Camera library `./cameralib.py`
-* Omnidirectional camera library `./omnidirectional_camera.py`
-* KITTI examples `./kitti_example.py`
-* Stereo camera examples `./stereo_camera_example.py`
-* Fish-eye camera remapping into a pin-hole camera `./fisheye_example.py`
+## 1.1 Installing the Library
 
-**Directories**
+You can either build and install the library or install it in editable mode. In editable mode you can make modifications to the library, and those modifications are reflected immediately in the functionality. Following
+shows how to build and install the library:
+
+```bash
+python -m build .
+pip install ./dist/python_camera_library-1.0.0-py3-none-any.whl
+```
+
+Following shows how to install the library in editable mode:
+
+```bash
+pip install --editable .
+```
+
+## 1.2 Directories
 * [conda_environments](./conda_environments/README.md) contains a YAML file for generating a Conda environment that can be used to execute the examples
+* [documentation](./documentation) contains Jupyter notebooks and other documentation
+* [python_camera_library](./python_camera_library) contains the actual camera library
 * [test_data](./test_data/README.md) contains test data used in the examples. You need to pull the data with `git lfs pull`
+* [tests](./tests) contains tests for the modules
 
-## Examples
+## 1.3 Modules
+* [Rectilinear camera](./python_camera_library/rectilinear_camera.py)
+  * Rectilinear (pinhole) camera module
+* [Omnidirectional camera](./python_camera_library/omnidirectional_camera.py)
+  * Omnidirectional camera module
+* [Equidistant fish-eye camera](./python_camera_library/fisheye_camera/equidistant.py)
+  * Equidistant fish-eye camera
+* [Equisolid fish-eye camera](./python_camera_library/fisheye_camera/equisolid.py)
+  * Equisolid fish-eye camera
+* [Homography](./python_camera_library/homography.py)
+  * Homography module that contains, for example, the DLT-algorithm (Direct Linear Transformation) for estimating homographies
+
+## 1.4 Examples
+* [KITTI example](./kitti_example.py)
+  * Shows how to change vantage point between different sensors
+* [Stereo camera example](./stereo_camera_example.py)
+  * Shows how a depth map can be converted into a point cloud
+* [Omnidirectional camera example](./omnidirectional_example.py)
+  * Omnidirectional camera remapping into a pin-hole camera
+* [Homography example](./homography_example.py)
+  * The homography example shows how to calculate a homography between an object defined in the object coordinates and image of that object seen in the image plane
+* [Fisheye camera models](./documentation/fisheye_camera_models.ipynb)
+  * A Jupyter notebook that demonstrates how both the equidistant- and equisolid fish-eye cameras work
 
 Steps before running the examples:
 * After cloning the repo, pull the test data (LFS) using `git pull` or `git lfs pull`.
   * Take a look [here](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage) regarding how to install Git LFS.
 * Create a Conda virtual environment as per these [instructions](./conda_environments/README.md)
 
-### KITTI Example
+### 1.4.1 KITTI Example
 
 The KITTI example demonstrates how lidar generated point clouds can be transformed to different coordinate frames. Outputs PLY files that can be viewed, for example, using [CloudCompare](https://www.danielgm.net/cc/) or [MeshLab](https://www.meshlab.net/).
 
@@ -37,19 +72,19 @@ Above code generates the following PLY files:
 * 3d_lidar.ply
 * 3d_proj_cam2.ply
 
-### Stereo Camera Example
+### 1.4.2 Stereo Camera Example
 
-The stereo camera example demonstrates how a X- and Y-coordinates can be generated based on a depth map (Z-coordinate). Outputs a PLY file that can be viewed, for example, using CloudCompare or MeshLab.
+The stereo camera example demonstrates how a X- and Y-coordinates can be generated based on a depth map (Z-coordinate). Outputs a PLY file that can be viewed, for example, using [CloudCompare](https://www.danielgm.net/cc/) or [MeshLab](https://www.meshlab.net/).
 
 ```python
 python ./stereo_camera_example.py
 ```
 
-Above code generate the following PLY file:
+Above code generates the following PLY file:
 
 * stereo_camera.ply
 
-### Fish-eye Camera Example
+### 1.4.3 Omnidirectional Camera Example
 
 The fish-eye camera example shows images captured using a camera with "fish-eye" lenses, described using the [omnidirectional camera model](http://rpg.ifi.uzh.ch/docs/IROS06_scaramuzza.pdf), can be re-mapped into a pin-hole camera image.
 
@@ -57,7 +92,7 @@ The fish-eye camera example shows images captured using a camera with "fish-eye"
 python ./fisheye_example.py
 ```
 
-### Homography Example
+### 1.4.4 Homography Example
 
 The homography example shows how to calculate a homography between an object defined in the object coordinates and image of that object seen in the image plane. Extracts R (rotation matrix) and t (translation vector)
 from the calculated homography.
@@ -66,7 +101,7 @@ from the calculated homography.
 python ./homography_example.py
 ```
 
-## Test Data
+## 1.5 Test Data
 
 The directory `./test_data` contains test 3D point clouds and images. The KITTI data is from the [KITTI Vision Benchmark](http://www.cvlibs.net/datasets/kitti/) [raw dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php). The fish-eye camera data is from the [OCamCalib Toolbox](https://sites.google.com/site/scarabotix/ocamcalib-toolbox/ocamcalib-toolbox-download-page) (University of Zurich).
 
@@ -90,7 +125,7 @@ If you use any data from the KITTI raw dataset, please cite the following.
 }
 ```
 
-If you use the fish-eye camera data, please cite the following.
+If you use the omnidirectional camera data, please cite the following.
 
 ```
 {

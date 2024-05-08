@@ -18,7 +18,7 @@ from typing import Tuple
 
 def dlt_homography(x: np.ndarray, xp: np.ndarray) -> np.ndarray:
     """
-    Calculates a 2D homography 3x3 matrix H, such that xp = Hx. Uses DLT, direct linear transformation, for calculating the solution.
+    Calculates a 3x3 homography matrix H, such that xp = Hx. Uses DLT, direct linear transformation, for calculating the solution.
 
     Parameters
     ----------
