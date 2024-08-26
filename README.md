@@ -1,5 +1,7 @@
 # 1 Python Camera Library
 
+[![pre-commit](https://github.com/JarnoRalli/python_camera_library/actions/workflows/pre-commit.yml/badge.svg?branch=main&event=push)](https://github.com/JarnoRalli/python_camera_library/actions/workflows/pre-commit.yml)
+
 This repository demonstrates how several different camera models, such as the rectilinear (pinhole), omnidirectional and the fish-eye camera models operate.
 The rectilinear camera module contains, for example, forward- and back-projection functions, the omnidirectional camera module contains functionality for
 creating look-up-table (LUT) that can be used in interpolation for converting images taken with omnidirectional camera into rectilinear images.
