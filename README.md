@@ -24,11 +24,16 @@ pip install --editable .
 ```
 
 ## 1.2 Directories
-* [conda_environments](./conda_environments/README.md) contains a YAML file for generating a Conda environment that can be used to execute the examples
-* [documentation](./documentation) contains Jupyter notebooks and other documentation
-* [python_camera_library](./python_camera_library) contains the actual camera library
-* [test_data](./test_data/README.md) contains test data used in the examples. You need to pull the data with `git lfs pull`
-* [tests](./tests) contains tests for the modules
+* [conda_environments](./conda_environments/README.md)
+  * Contains a YAML file for generating a Conda environment that can be used to execute the examples
+* [documentation](./documentation/README.md)
+  * Contains Jupyter notebooks and other documentation
+* [python_camera_library](./python_camera_library)
+  * Contains the actual camera library
+* [test_data](./test_data/README.md)
+  * Contains test data used in the examples. You need to pull the data with `git lfs pull`
+* [tests](./tests)
+  * Contains tests for the modules
 
 ## 1.3 Modules
 * [Rectilinear camera](./python_camera_library/rectilinear_camera.py)
