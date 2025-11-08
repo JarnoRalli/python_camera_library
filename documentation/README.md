@@ -1,13 +1,13 @@
 # 1 Documentation
 
-This folder contains documentation and other examples.
+This folder contains documentation, Jupyter notebooks and other examples.
 
 ## 1.1 Contents
 
 * [pinhole_projection.ipynb](./pinhole_projection.ipynb)
-  * This Jupyter notebook describes the pinhole camera model, and the relationship between H-FOV and focal length.
+  * This Jupyter notebook describes the pinhole camera model, and the relationship between H-FOV and the focal length.
 * [fisheye_camera_models.ipynb](./fisheye_camera_models.ipynb)
   * This Jupyter notebook describes typical fisheye camera models.
 * [camera_pose_to_homography.ipynb](./camera_pose_to_homography.ipynb)
-  * This Jupyter notebook describes homography between a plane defined in a world coordinate frame and the camera.
+  * This Jupyter notebook describes homography between a plane defined in a world coordinate frame and a camera.
 
